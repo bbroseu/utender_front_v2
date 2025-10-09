@@ -26,6 +26,7 @@ export const TenderListPage = (): JSX.Element => {
  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
  const [advancedFilters, setAdvancedFilters] = useState<SearchFilters>({});
+ const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
 
  const handleLogout = async () => {
   try {
@@ -47,10 +48,10 @@ export const TenderListPage = (): JSX.Element => {
   return () => clearTimeout(timer);
  }, [searchQuery]);
 
- // Reset page to 1 when search query changes
+ // Reset page to 1 when search query or category changes
  React.useEffect(() => {
   setCurrentPage(1);
- }, [debouncedSearchQuery]);
+ }, [debouncedSearchQuery, selectedCategoryId]);
 
  // Use appropriate query based on search
  const shouldUseSearch = debouncedSearchQuery.trim().length > 0;
@@ -72,7 +73,8 @@ export const TenderListPage = (): JSX.Element => {
          ? advancedFilters  // No limit/page when using advanced filters - get all results
          : {
              page: currentPage,
-             limit: 50
+             limit: 50,
+             ...(selectedCategoryId && { category_id: selectedCategoryId })
            }
      );
 
@@ -94,11 +96,23 @@ export const TenderListPage = (): JSX.Element => {
  // Get monthly stats (with error handling for missing endpoint)
  const { data: monthlyStatsData, isError: isMonthlyStatsError } = useGetMonthlyTenderStatsQuery({});
  const monthlyTenderCount = isMonthlyStatsError ? 0 : (monthlyStatsData?.data?.count || 0);
- const currentMonth = new Date().toLocaleDateString('sq-AL', { month: 'long' });
+
+ // Albanian month names
+ const getAlbanianMonth = () => {
+  const monthNames = [
+   'Janar', 'Shkurt', 'Mars', 'Prill', 'Maj', 'Qershor',
+   'Korrik', 'Gusht', 'Shtator', 'Tetor', 'Nëntor', 'Dhjetor'
+  ];
+  return monthNames[new Date().getMonth()];
+ };
+ const currentMonth = getAlbanianMonth();
 
  // Get categories
  const { data: categoriesData, isLoading: isCategoriesLoading } = useGetCategoriesQuery();
- const categories = categoriesData?.data || [];
+ const categories = React.useMemo(() => {
+  const data = categoriesData?.data || [];
+  return [...data].sort((a, b) => a.name.localeCompare(b.name, 'sq'));
+ }, [categoriesData]);
 
  const getDisplayName = () => {
   if (user?.firstName && user?.lastName) {
@@ -176,6 +190,15 @@ export const TenderListPage = (): JSX.Element => {
   setCurrentPage(1);
  };
 
+ const handleCategoryClick = (categoryId: number) => {
+  if (selectedCategoryId === categoryId) {
+   // Clicking the same category again will clear the filter
+   setSelectedCategoryId(null);
+  } else {
+   setSelectedCategoryId(categoryId);
+  }
+ };
+
  return (
   <div className="min-h-screen bg-white font-questrial">
    {/* Header */}
@@ -202,11 +225,13 @@ export const TenderListPage = (): JSX.Element => {
         <div className="flex flex-col gap-1 text-xs text-right">
          <div>
           <span className="text-gray-600">Pako Aktive: </span>
-          <span className="font-semibold text-[#1b2631]">3/M</span>
+          <span className="font-semibold text-[#1b2631]">{user?.pako_name || 'N/A'}</span>
          </div>
          <div>
           <span className="text-gray-600">Pako përfundon: </span>
-          <span className="font-semibold text-[#1b2631]">01.01.2025</span>
+          <span className="font-semibold text-[#1b2631]">
+           {user?.valid_time ? new Date(user.valid_time * 1000).toLocaleDateString('en-GB') : 'N/A'}
+          </span>
          </div>
         </div>
         <Button onClick={handleLogout} className="bg-[#f0c419] hover:bg-[#f0c419]/90 text-white px-3 py-1 rounded-md text-xs">Çkyçu</Button>
@@ -281,11 +306,13 @@ export const TenderListPage = (): JSX.Element => {
       <div className="space-y-2 text-sm">
        <div className="flex justify-between">
         <span className="text-gray-600">Pako Aktive:</span>
-        <span className="font-semibold text-[#1b2631]">3/M</span>
+        <span className="font-semibold text-[#1b2631]">{user?.pako_name || 'N/A'}</span>
        </div>
        <div className="flex justify-between">
         <span className="text-gray-600">Pako përfundon:</span>
-        <span className="font-semibold text-[#1b2631]">01.01.2025</span>
+        <span className="font-semibold text-[#1b2631]">
+         {user?.valid_time ? new Date(user.valid_time * 1000).toLocaleDateString('en-GB') : 'N/A'}
+        </span>
        </div>
       </div>
      </div>
@@ -364,17 +391,35 @@ export const TenderListPage = (): JSX.Element => {
    {/* Categories */}
    <div className="tenders-container  mx-auto px-4 lg:px-[148px] py-2">
     <div className="bg-white py-3">
-     <div className="flex flex-wrap items-center gap-2 md:gap-4">
-      <span className="font-medium text-[#1B2631] text-sm md:text-md w-full md:w-auto mb-2 md:mb-0">Kategoritë:</span>
-      {categories.map((category) => (
-       <button
-        key={category.id}
-        
-        className="text-xs md:text-sm text-gray-500 hover:text-[#f0c419] transition-colors border border-gray-300 rounded-full px-2 md:px-3 py-1"
-       >
-        {category.name}
-       </button>
-      ))}
+     <div className="flex items-center gap-2 md:gap-4">
+      <span className="font-medium text-[#1B2631] text-sm md:text-md whitespace-nowrap">Kategoritë:</span>
+      <div className="flex-1 overflow-x-auto scrollbar-hide">
+       <div className="flex items-center gap-2 md:gap-3">
+        <button
+         onClick={() => setSelectedCategoryId(null)}
+         className={`text-xs md:text-sm transition-colors border rounded-full px-2 md:px-3 py-1 whitespace-nowrap flex-shrink-0 ${
+          selectedCategoryId === null
+           ? "bg-[#f0c419] text-white border-[#f0c419]"
+           : "text-gray-500 border-gray-300 hover:text-[#f0c419] hover:border-[#f0c419]"
+         }`}
+        >
+         Të gjitha
+        </button>
+        {categories.map((category) => (
+         <button
+          key={category.id}
+          onClick={() => handleCategoryClick(category.id)}
+          className={`text-xs md:text-sm transition-colors border rounded-full px-2 md:px-3 py-1 whitespace-nowrap flex-shrink-0 ${
+           selectedCategoryId === category.id
+            ? "bg-[#f0c419] text-white border-[#f0c419]"
+            : "text-gray-500 border-gray-300 hover:text-[#f0c419] hover:border-[#f0c419]"
+          }`}
+         >
+          {category.name}
+         </button>
+        ))}
+       </div>
+      </div>
      </div>
     </div>
    </div>

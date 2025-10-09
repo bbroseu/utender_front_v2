@@ -21,6 +21,8 @@ export interface User {
   registrationDate?: string;
   role?: string;
   name?: string; // Keep for backward compatibility
+  pako_name?: string; // Package name
+  valid_time?: number; // Package expiry timestamp
 }
 
 export interface AuthState {
