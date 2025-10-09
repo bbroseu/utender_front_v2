@@ -27,6 +27,7 @@ export const TenderListPage = (): JSX.Element => {
  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
  const [advancedFilters, setAdvancedFilters] = useState<SearchFilters>({});
  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+ const [categorySearchQuery, setCategorySearchQuery] = useState("");
 
  const handleLogout = async () => {
   try {
@@ -113,6 +114,16 @@ export const TenderListPage = (): JSX.Element => {
   const data = categoriesData?.data || [];
   return [...data].sort((a, b) => a.name.localeCompare(b.name, 'sq'));
  }, [categoriesData]);
+
+ // Filter categories based on search query
+ const filteredCategories = React.useMemo(() => {
+  if (!categorySearchQuery.trim()) {
+   return categories;
+  }
+  return categories.filter(category =>
+   category.name.toLowerCase().includes(categorySearchQuery.toLowerCase())
+  );
+ }, [categories, categorySearchQuery]);
 
  const getDisplayName = () => {
   if (user?.firstName && user?.lastName) {
@@ -391,8 +402,22 @@ export const TenderListPage = (): JSX.Element => {
    {/* Categories */}
    <div className="tenders-container  mx-auto px-4 lg:px-[148px] py-2">
     <div className="bg-white py-3">
-     <div className="flex items-center gap-2 md:gap-4">
-      <span className="font-medium text-[#1B2631] text-sm md:text-md whitespace-nowrap">Kategoritë:</span>
+     <div className="flex flex-col gap-3">
+      {/* Category Header with Search */}
+      <div className="flex items-center gap-2 md:gap-4">
+       <span className="font-medium text-[#1B2631] text-sm md:text-md whitespace-nowrap">Kategoritë:</span>
+       <div className="flex-1 max-w-xs">
+        <Input
+         type="text"
+         placeholder="Kërko kategori..."
+         value={categorySearchQuery}
+         onChange={(e) => setCategorySearchQuery(e.target.value)}
+         className="h-8 text-xs border-gray-300 focus:border-[#f0c419] focus:ring-[#f0c419]"
+        />
+       </div>
+      </div>
+
+      {/* Category Pills */}
       <div className="flex-1 overflow-x-auto scrollbar-hide">
        <div className="flex items-center gap-2 md:gap-3">
         <button
@@ -405,7 +430,7 @@ export const TenderListPage = (): JSX.Element => {
         >
          Të gjitha
         </button>
-        {categories.map((category) => (
+        {filteredCategories.map((category) => (
          <button
           key={category.id}
           onClick={() => handleCategoryClick(category.id)}
@@ -470,7 +495,12 @@ export const TenderListPage = (): JSX.Element => {
        transition={{ duration: 0.4, delay: index * 0.1 }}
        className="bg-white border border-gray-200 rounded-lg p-4 mb-3"
       >
-       <div className="font-bold text-xs text-gray-900 mb-2">{displayData.title}</div>
+       <div
+        className="font-bold text-xs text-gray-900 mb-2 cursor-pointer hover:text-[#f0c419] transition-colors"
+        onClick={() => openTenderModal(tender)}
+       >
+        {displayData.title}
+       </div>
        <div className="text-xs text-gray-700 mb-1">
         <span className="font-semibold">Autoriteti:</span> {displayData.authority}
        </div>
@@ -556,7 +586,12 @@ export const TenderListPage = (): JSX.Element => {
            className="border-b border-gray-100 hover:bg-gray-50"
           >
            <td className="px-4 py-4 text-xs text-gray-900">{displayData.authority}</td>
-           <td className="px-4 py-4 text-xs text-gray-900 font-bold max-w-[250px]">{displayData.title}</td>
+           <td
+            className="px-4 py-4 text-xs text-gray-900 font-bold max-w-[250px] cursor-pointer hover:text-[#f0c419] transition-colors"
+            onClick={() => openTenderModal(tender)}
+           >
+            {displayData.title}
+           </td>
            <td className="px-4 py-4 text-xs text-gray-600">{displayData.dataPublished}</td>
            <td className="px-4 py-4 text-xs text-gray-600">{displayData.dataDeadline}</td>
            <td className="px-4 py-4 text-xs text-gray-600 max-w-[150px]">{displayData.category}</td>

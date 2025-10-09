@@ -1,5 +1,5 @@
 import React from "react";
-import { X, FileText, Download } from "lucide-react";
+import { X, FileText } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface TenderModalProps {
@@ -130,12 +130,7 @@ export const TenderModal: React.FC<TenderModalProps> = ({ isOpen, onClose, tende
                     <div className="flex items-center gap-2">
                       <FileText className="h-4 w-4 text-gray-500" />
                       <a href={tender.file} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-500 hover:underline">
-                        Shiko
-                      </a>
-                      <span className="text-gray-400">/</span>
-                      <a href={tender.file} download className="text-sm text-blue-500 hover:underline flex items-center gap-1">
-                        Shkarko
-                        <Download className="h-3 w-3" />
+                        Shiko Dokumentin
                       </a>
                     </div>
                   </td>

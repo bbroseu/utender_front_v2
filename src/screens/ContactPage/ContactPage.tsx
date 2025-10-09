@@ -28,7 +28,7 @@ export const ContactPage = (): JSX.Element => {
   setIsSubmitting(true);
 
   try {
-   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'https://api.utender.eu';
+   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 
    const response = await fetch(`${apiBaseUrl}/api/contact`, {
     method: 'POST',

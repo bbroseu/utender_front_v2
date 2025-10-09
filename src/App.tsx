@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useEffect } from "react";
 import { Layout } from "./components/Layout/Layout";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
+import { BackToTop } from "./components/BackToTop";
 import { UtenderHomePage } from "./screens/UtenderHomePage/UtenderHomePage";
 import { RegisterPage } from "./screens/RegisterPage/RegisterPage";
 import { LoginPage } from "./screens/LoginPage/LoginPage";
@@ -81,6 +82,7 @@ export const App = (): JSX.Element => {
             }
           />
         </Routes>
+        <BackToTop />
       </Layout>
     </Router>
   );

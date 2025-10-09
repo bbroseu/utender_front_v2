@@ -142,11 +142,11 @@ export const RegisterPage = (): JSX.Element => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 font-questrial">
+    <div className="flex flex-col bg-gray-50 font-questrial">
 
       {/* Register Form */}
-      <div className="flex items-center justify-center py-16">
-        <div className="bg-white rounded-2xl shadow-lg p-8 w-full max-w-md">
+      <div className="flex items-center justify-center py-8 md:py-16 px-4 min-h-[calc(100vh-300px)]">
+        <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8 w-full max-w-md">
           <h2 className="text-2xl font-bold text-center mb-2 text-[#1b2631]">
             Abonohu
           </h2>
@@ -304,23 +304,6 @@ export const RegisterPage = (): JSX.Element => {
               ) : (
                 "Abonohu"
               )}
-            </Button>
-
-            <div className="relative my-4">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-gray-300" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="bg-white px-2 text-gray-500">OSE</span>
-              </div>
-            </div>
-
-            <Button
-              type="button"
-              className="w-full bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-3 rounded-lg text-base flex items-center justify-center gap-2"
-            >
-              <img src="/google.svg" alt="Google" className="w-5 h-5" />
-              Continue with Google
             </Button>
 
             <p className="text-center text-sm text-gray-600 mt-6">
