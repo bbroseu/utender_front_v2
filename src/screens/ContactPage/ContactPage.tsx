@@ -83,51 +83,50 @@ export const ContactPage = (): JSX.Element => {
     </div>
    </div>
 
-   {/* Contact Form & Info */}
+   {/* Contact Information */}
    <div className="py-12 md:py-16">
     <div className="container mx-auto px-4 lg:px-[148px]">
-     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
+     <div className="max-w-4xl mx-auto">
       {/* Contact Information */}
       <motion.div
-       initial={{ opacity: 0, x: -30 }}
-       whileInView={{ opacity: 1, x: 0 }}
+       initial={{ opacity: 0, y: 30 }}
+       whileInView={{ opacity: 1, y: 0 }}
        viewport={{ once: true }}
        transition={{ duration: 0.6 }}
-       className="lg:col-span-1"
       >
-       <div className="bg-white rounded-2xl shadow-lg p-8">
-        <h2 className="text-2xl font-bold text-[#1b2631] mb-6">Informata Kontakti</h2>
+       <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12">
+        <h2 className="text-3xl md:text-4xl font-bold text-[#1b2631] mb-8 text-center">Informata Kontakti</h2>
 
-        <div className="space-y-6">
-         <div className="flex items-start gap-4">
-          <div className="bg-[#f0c419]/10 p-3 rounded-lg">
-           <Mail className="w-5 h-5 text-[#f0c419]" />
+        <div className="space-y-8">
+         <div className="flex items-start gap-6">
+          <div className="bg-[#f0c419]/10 p-4 rounded-lg">
+           <Mail className="w-8 h-8 text-[#f0c419]" />
           </div>
           <div>
-           <h3 className="font-semibold text-[#1b2631] mb-1">Email</h3>
-           <p className="text-gray-600 text-sm">info@utender.eu</p>
-           <p className="text-gray-600 text-sm">support@utender.eu</p>
+           <h3 className="text-xl font-semibold text-[#1b2631] mb-2">Email</h3>
+           <p className="text-gray-600 text-lg">info@utender.eu</p>
+           <p className="text-gray-600 text-lg">support@utender.eu</p>
           </div>
          </div>
 
-         <div className="flex items-start gap-4">
-          <div className="bg-[#f0c419]/10 p-3 rounded-lg">
-           <Phone className="w-5 h-5 text-[#f0c419]" />
+         <div className="flex items-start gap-6">
+          <div className="bg-[#f0c419]/10 p-4 rounded-lg">
+           <Phone className="w-8 h-8 text-[#f0c419]" />
           </div>
           <div>
-           <h3 className="font-semibold text-[#1b2631] mb-1">Telefoni</h3>
-           <p className="text-gray-600 text-sm">+383 44 123 456</p>
-           <p className="text-gray-600 text-sm">+383 49 123 456</p>
+           <h3 className="text-xl font-semibold text-[#1b2631] mb-2">Telefoni</h3>
+           <p className="text-gray-600 text-lg">+383 44 123 456</p>
+           <p className="text-gray-600 text-lg">+383 49 123 456</p>
           </div>
          </div>
 
-         <div className="flex items-start gap-4">
-          <div className="bg-[#f0c419]/10 p-3 rounded-lg">
-           <MapPin className="w-5 h-5 text-[#f0c419]" />
+         <div className="flex items-start gap-6">
+          <div className="bg-[#f0c419]/10 p-4 rounded-lg">
+           <MapPin className="w-8 h-8 text-[#f0c419]" />
           </div>
           <div>
-           <h3 className="font-semibold text-[#1b2631] mb-1">Adresa</h3>
-           <p className="text-gray-600 text-sm">
+           <h3 className="text-xl font-semibold text-[#1b2631] mb-2">Adresa</h3>
+           <p className="text-gray-600 text-lg">
             Rr. Garibaldi, Nr. 15
             <br />
             10000 Prishtinë, Kosovë
@@ -136,115 +135,23 @@ export const ContactPage = (): JSX.Element => {
          </div>
         </div>
 
-        <div className="mt-8 pt-8 border-t border-gray-200">
-         <h3 className="font-semibold text-[#1b2631] mb-3">Orari i punës</h3>
-         <div className="space-y-2 text-sm text-gray-600">
-          <div className="flex justify-between">
+        <div className="mt-10 pt-10 border-t border-gray-200">
+         <h3 className="text-xl font-semibold text-[#1b2631] mb-6 text-center">Orari i punës</h3>
+         <div className="space-y-4 text-lg text-gray-600">
+          <div className="flex justify-between items-center">
            <span>E Hënë - E Premte:</span>
-           <span className="font-medium">09:00 - 17:00</span>
+           <span className="font-medium text-[#1b2631]">09:00 - 17:00</span>
           </div>
-          <div className="flex justify-between">
+          <div className="flex justify-between items-center">
            <span>E Shtunë:</span>
-           <span className="font-medium">10:00 - 14:00</span>
+           <span className="font-medium text-[#1b2631]">10:00 - 14:00</span>
           </div>
-          <div className="flex justify-between">
+          <div className="flex justify-between items-center">
            <span>E Diel:</span>
            <span className="font-medium text-red-500">Mbyllur</span>
           </div>
          </div>
         </div>
-       </div>
-      </motion.div>
-
-      {/* Contact Form */}
-      <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
-       <div className="bg-white rounded-2xl shadow-lg p-8">
-        <h2 className="text-2xl font-bold text-[#1b2631] mb-6">Dërgoni një Mesazh</h2>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-           <label className="block text-sm font-medium text-gray-700 mb-2">Emri juaj *</label>
-           <Input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            className="w-full"
-            placeholder="Shkruani emrin tuaj"
-            required
-           />
-          </div>
-
-          <div>
-           <label className="block text-sm font-medium text-gray-700 mb-2">Email adresa *</label>
-           <Input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            className="w-full"
-            placeholder="email@example.com"
-            required
-           />
-          </div>
-         </div>
-
-         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Subjekti</label>
-          <Input
-           type="text"
-           name="subject"
-           value={formData.subject}
-           onChange={handleChange}
-           className="w-full"
-           placeholder="Shkruani subjektin e mesazhit"
-          />
-         </div>
-
-         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Mesazhi juaj *</label>
-          <textarea
-           name="message"
-           value={formData.message}
-           onChange={handleChange}
-           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#f0c419] focus:border-transparent resize-none"
-           rows={6}
-           placeholder="Shkruani mesazhin tuaj këtu..."
-           required
-          />
-         </div>
-
-         {submitStatus === "success" && (
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="bg-green-50 text-green-600 px-4 py-3 rounded-lg">
-           ✓ Mesazhi juaj është dërguar me sukses! Do t'ju përgjigjemi së shpejti.
-          </motion.div>
-         )}
-
-         {submitStatus === "error" && (
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="bg-red-50 text-red-600 px-4 py-3 rounded-lg">
-           ✗ Ka ndodhur një gabim. Ju lutemi provoni përsëri.
-          </motion.div>
-         )}
-
-         <Button
-          type="submit"
-          disabled={isSubmitting}
-          className="w-full md:w-auto bg-[#f0c419] hover:bg-[#f0c419]/90 text-white px-8 py-3 rounded-lg font-semibold text-base flex items-center justify-center gap-2"
-         >
-          {isSubmitting ? (
-           <>
-            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-            Duke dërguar...
-           </>
-          ) : (
-           <>
-            <Send className="w-4 h-4" />
-            Dërgo Mesazhin
-           </>
-          )}
-         </Button>
-        </form>
        </div>
       </motion.div>
      </div>

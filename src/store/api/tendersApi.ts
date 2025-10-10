@@ -73,6 +73,9 @@ export interface TendersQueryParams {
   from_date?: number;
   to_date?: number;
   flag?: number;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+  _v?: number; // Cache bust version
 }
 
 export interface MonthlyStatsResponse {
@@ -129,15 +132,17 @@ export const tendersApi = createApi({
   }),
   tagTypes: ['Tender'],
   endpoints: (builder) => ({
-    getTenders: builder.query<TendersResponse, TendersQueryParams>({
-      query: ({ page = 1, limit = 50, search, contracting_authority_id, category_id, notice_type_id, region_id, state_id, contract_type_id, procedures_id, from_date, to_date, flag } = {}) => {
+    getTenders: builder.query<TendersResponse, TendersQueryParams & { searchTerm?: string }>({
+      query: ({ page = 1, limit = 50, search, searchTerm, contracting_authority_id, category_id, notice_type_id, region_id, state_id, contract_type_id, procedures_id, from_date, to_date, flag, sortBy, sortOrder, _v } = {}) => {
         const params = new URLSearchParams({
           page: page.toString(),
           limit: limit.toString(),
         });
 
-        if (search) {
-          params.append('search', search);
+        // Support both 'search' and 'searchTerm' parameters for backwards compatibility
+        const searchQuery = searchTerm || search;
+        if (searchQuery) {
+          params.append('search', searchQuery);
         }
         if (contracting_authority_id) {
           params.append('contracting_authority_id', contracting_authority_id.toString());
@@ -169,23 +174,52 @@ export const tendersApi = createApi({
         if (flag !== undefined && flag !== null) {
           params.append('flag', flag.toString());
         }
+        if (sortBy) {
+          params.append('sortBy', sortBy);
+        }
+        if (sortOrder) {
+          params.append('sortOrder', sortOrder);
+        }
 
+        console.log('🌐 RTK Query making request to:', `/tenders?${params.toString()}`);
         return `/tenders?${params.toString()}`;
       },
+      // Custom cache key serialization to ensure sorting changes trigger refetch
+      serializeQueryArgs: ({ queryArgs }) => {
+        // Create a unique cache key that includes all parameters including sorting
+        const sortedArgs = Object.keys(queryArgs || {})
+          .sort()
+          .reduce((acc, key) => {
+            acc[key] = queryArgs[key];
+            return acc;
+          }, {} as any);
+        const cacheKey = JSON.stringify(sortedArgs);
+        console.log('🔑 RTK Query cache key:', cacheKey);
+        return cacheKey;
+      },
+      keepUnusedDataFor: 0, // Don't cache results
       providesTags: ['Tender'],
     }),
     getTenderById: builder.query<TenderResponse, number>({
       query: (id) => `/tenders/${id}`,
       providesTags: ['Tender'],
     }),
-    searchTenders: builder.query<TendersResponse, { searchTerm: string; page?: number; limit?: number }>({
-      query: ({ searchTerm, page = 1, limit = 50 }) => {
+    searchTenders: builder.query<TendersResponse, { searchTerm: string; page?: number; limit?: number; sortBy?: string; sortOrder?: 'asc' | 'desc' }>({
+      query: ({ searchTerm, page = 1, limit = 50, sortBy, sortOrder }) => {
         const params = new URLSearchParams({
           page: page.toString(),
           limit: limit.toString(),
         });
+        if (sortBy) {
+          params.append('sortBy', sortBy);
+        }
+        if (sortOrder) {
+          params.append('sortOrder', sortOrder);
+        }
+        console.log('🌐 RTK Query search request to:', `/tenders/search/${encodeURIComponent(searchTerm)}?${params.toString()}`);
         return `/tenders/search/${encodeURIComponent(searchTerm)}?${params.toString()}`;
       },
+      keepUnusedDataFor: 0, // Don't cache results
       providesTags: ['Tender'],
     }),
     getActiveTenders: builder.query<TendersResponse, TendersQueryParams>({
@@ -231,6 +265,7 @@ export const tendersApi = createApi({
 
 export const {
   useGetTendersQuery,
+  useLazyGetTendersQuery,
   useGetTenderByIdQuery,
   useSearchTendersQuery,
   useGetActiveTendersQuery,

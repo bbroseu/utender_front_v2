@@ -10,7 +10,7 @@ import { Menu, X } from "lucide-react";
 import { useAppSelector, useAppDispatch } from "../../store/hooks";
 import { logout } from "../../store/slices/authSlice";
 import { useLogoutMutation } from "../../store/api/authApi";
-import { useGetTendersQuery, useSearchTendersQuery, useGetMonthlyTenderStatsQuery, useGetCategoriesQuery, type TendersQueryParams } from "../../store/api/tendersApi";
+import { useGetTendersQuery, useLazyGetTendersQuery, useSearchTendersQuery, useGetMonthlyTenderStatsQuery, useGetCategoriesQuery, type TendersQueryParams } from "../../store/api/tendersApi";
 import type { SearchFilters } from "../../components/AdvancedSearchModal";
 
 export const TenderListPage = (): JSX.Element => {
@@ -28,6 +28,8 @@ export const TenderListPage = (): JSX.Element => {
  const [advancedFilters, setAdvancedFilters] = useState<SearchFilters>({});
  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
  const [categorySearchQuery, setCategorySearchQuery] = useState("");
+ const [sortField, setSortField] = useState<'publication_date' | 'expiry_date' | null>('publication_date');
+ const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
  const handleLogout = async () => {
   try {
@@ -49,35 +51,83 @@ export const TenderListPage = (): JSX.Element => {
   return () => clearTimeout(timer);
  }, [searchQuery]);
 
- // Reset page to 1 when search query or category changes
+ // Reset page to 1 when search query, category, or sorting changes
  React.useEffect(() => {
   setCurrentPage(1);
- }, [debouncedSearchQuery, selectedCategoryId]);
+ }, [debouncedSearchQuery, selectedCategoryId, sortField, sortOrder]);
 
  // Use appropriate query based on search
  const shouldUseSearch = debouncedSearchQuery.trim().length > 0;
  const hasAdvancedFilters = Object.keys(advancedFilters).length > 0;
 
- const {
-  data: tendersData,
-  isLoading,
-  isError,
-  error
- } = shouldUseSearch
-   ? useSearchTendersQuery({
-       searchTerm: debouncedSearchQuery,
-       page: currentPage,
-       limit: 50
+ // Build query params - now always using getTenders endpoint
+ const queryParams = React.useMemo(() => {
+   console.log('🔍 Building query params - sortField:', sortField, 'sortOrder:', sortOrder);
+
+   let params: any = {
+     page: currentPage,
+     limit: 50
+   };
+
+   // Add search term if searching
+   if (shouldUseSearch) {
+     params.searchTerm = debouncedSearchQuery;
+   }
+
+   // Add advanced filters if present
+   if (hasAdvancedFilters) {
+     params = { ...params, ...advancedFilters };
+   }
+
+   // Add category filter if selected
+   if (selectedCategoryId) {
+     params.category_id = selectedCategoryId;
+   }
+
+   // Always add sorting parameters if they are set
+   if (sortField) {
+     params.sortBy = sortField;
+     params.sortOrder = sortOrder;
+   }
+
+   console.log('📊 Final query params:', JSON.stringify(params));
+   return params;
+ }, [shouldUseSearch, hasAdvancedFilters, debouncedSearchQuery, currentPage, selectedCategoryId, sortField, sortOrder, advancedFilters]);
+
+ // Log which endpoint is being used
+ console.log('🎯 Using endpoint: GET_TENDERS (unified)', 'with params:', queryParams);
+
+ // Create a unique key for RTK Query to force refetching
+ // This ensures RTK Query treats each sort change as a new query
+ const queryKey = React.useMemo(() => {
+   return JSON.stringify(queryParams);
+ }, [queryParams]);
+
+ // Use lazy query for manual control
+ const [getTenders, { data: tendersData, isLoading, isFetching, isError, error, isSuccess }] = useLazyGetTendersQuery();
+
+ // Trigger the query whenever params change
+ React.useEffect(() => {
+   console.log('🚀 Triggering getTenders with params:', queryParams);
+   getTenders(queryParams)
+     .then((result) => {
+       console.log('✅ Query result:', result);
+       if (result.data) {
+         console.log('📦 Data received:', result.data.data?.length, 'tenders');
+       }
      })
-   : useGetTendersQuery(
-       hasAdvancedFilters
-         ? advancedFilters  // No limit/page when using advanced filters - get all results
-         : {
-             page: currentPage,
-             limit: 50,
-             ...(selectedCategoryId && { category_id: selectedCategoryId })
-           }
-     );
+     .catch((err) => {
+       console.error('❌ Query error:', err);
+     });
+ }, [queryParams]);
+
+ // Debug loading states and data
+ React.useEffect(() => {
+   console.log('📊 Query state - isLoading:', isLoading, 'isFetching:', isFetching, 'isSuccess:', isSuccess, 'isError:', isError);
+   if (error) {
+     console.error('❌ Error details:', error);
+   }
+ }, [isLoading, isFetching, isSuccess, isError, error]);
 
 
  const tenders = tendersData?.data || [];
@@ -93,6 +143,12 @@ export const TenderListPage = (): JSX.Element => {
      console.log('🎯 Frontend - First tender sample:', tenders[0]);
    }
  }, [tendersData, tenders]);
+
+ // Log when sort parameters change
+ React.useEffect(() => {
+   console.log('🔄 Sort parameters changed in useEffect - sortField:', sortField, 'sortOrder:', sortOrder);
+   // The lazy query will be triggered automatically via queryParams change
+ }, [sortField, sortOrder]);
 
  // Get monthly stats (with error handling for missing endpoint)
  const { data: monthlyStatsData, isError: isMonthlyStatsError } = useGetMonthlyTenderStatsQuery({});
@@ -199,6 +255,33 @@ export const TenderListPage = (): JSX.Element => {
   console.log("Advanced search filters received:", filters);
   setAdvancedFilters(filters);
   setCurrentPage(1);
+ };
+
+ const handleSort = (field: 'publication_date' | 'expiry_date') => {
+  console.log('🔄 SORT BUTTON CLICKED!');
+  console.log('  📍 Field clicked:', field);
+  console.log('  📍 Current state - sortField:', sortField, 'sortOrder:', sortOrder);
+
+  // Reset to page 1 first
+  setCurrentPage(1);
+
+  if (sortField === field) {
+   // Toggle sort order if clicking the same field
+   const newOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+   console.log('  ➡️ Same field clicked - toggling order from', sortOrder, 'to', newOrder);
+   setSortOrder(newOrder);
+  } else {
+   // Set new field with default desc order
+   console.log('  ➡️ Different field clicked - changing from', sortField, 'to', field);
+   console.log('  ➡️ Setting order to desc');
+   setSortField(field);
+   setSortOrder('desc');
+  }
+
+  // Force an immediate log of what will be sent
+  setTimeout(() => {
+   console.log('  ✅ State after update - sortField:', sortField, 'sortOrder:', sortOrder);
+  }, 100);
  };
 
  const handleCategoryClick = (categoryId: number) => {
@@ -469,6 +552,30 @@ export const TenderListPage = (): JSX.Element => {
 
    {/* Mobile Cards (visible on mobile) */}
    <div className="block md:hidden tenders-container  mx-auto px-4 py-4">
+    {/* Mobile Sorting Controls */}
+    <div className="mb-4 flex gap-2">
+     <button
+      onClick={() => handleSort('publication_date')}
+      className={`flex-1 px-3 py-2 text-xs font-medium rounded-lg border transition-colors ${
+       sortField === 'publication_date'
+        ? 'bg-[#f0c419] text-white border-[#f0c419]'
+        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+      }`}
+     >
+      Data e Publikimit {sortField === 'publication_date' && (sortOrder === 'asc' ? '↑' : '↓')}
+     </button>
+     <button
+      onClick={() => handleSort('expiry_date')}
+      className={`flex-1 px-3 py-2 text-xs font-medium rounded-lg border transition-colors ${
+       sortField === 'expiry_date'
+        ? 'bg-[#f0c419] text-white border-[#f0c419]'
+        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+      }`}
+     >
+      Data e Perfundimit {sortField === 'expiry_date' && (sortOrder === 'asc' ? '↑' : '↓')}
+     </button>
+    </div>
+
     {isLoading && (
      <div className="text-center py-8">
       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#f0c419] mx-auto"></div>
@@ -543,8 +650,28 @@ export const TenderListPage = (): JSX.Element => {
         <tr>
          <th className="px-4 py-3 text-left text-xs font-bold text-gray-700">Autoriteti Kontraktues</th>
          <th className="px-4 py-3 text-left text-xs font-bold text-gray-700">Titulli i Tenderit</th>
-         <th className="px-4 py-3 text-left text-xs font-bold text-gray-700">Data e Publikimit</th>
-         <th className="px-4 py-3 text-left text-xs font-bold text-gray-700">Data e Skadimit</th>
+         <th
+          className="px-4 py-3 text-left text-xs font-bold text-gray-700 cursor-pointer hover:bg-gray-100 transition-colors select-none"
+          onClick={() => handleSort('publication_date')}
+         >
+          <div className="flex items-center gap-1">
+           Data e Publikimit
+           <span className={sortField === 'publication_date' ? 'text-[#f0c419]' : 'text-gray-400'}>
+            {sortField === 'publication_date' && sortOrder === 'asc' ? '↑' : '↓'}
+           </span>
+          </div>
+         </th>
+         <th
+          className="px-4 py-3 text-left text-xs font-bold text-gray-700 cursor-pointer hover:bg-gray-100 transition-colors select-none"
+          onClick={() => handleSort('expiry_date')}
+         >
+          <div className="flex items-center gap-1">
+           Data e Perfundimit
+           <span className={sortField === 'expiry_date' ? 'text-[#f0c419]' : 'text-gray-400'}>
+            {sortField === 'expiry_date' && sortOrder === 'asc' ? '↑' : '↓'}
+           </span>
+          </div>
+         </th>
          <th className="px-4 py-3 text-left text-xs font-bold text-gray-700">Nënkategoria</th>
          <th className="px-4 py-3 text-left text-xs font-bold text-gray-700">Shteti</th>
          <th className="px-4 py-3 text-left text-xs font-bold text-gray-700">Procedura</th>

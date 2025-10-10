@@ -56,11 +56,6 @@ export const SummarySection = (): JSX.Element => {
      className="text-center mb-8 md:mb-12"
     >
      <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-3 font-questrial text-[#1b2631]">Çmime të përballueshme</h2>
-     <p className="text-gray-600 text-sm md:text-base font-questrial max-w-2xl mx-auto">
-      Lorem ipsum dolor sit amet consectetur. Nam fames nullam
-      <br />
-      aliquet vivamus integer massa amet vel.
-     </p>
     </motion.div>
 
     {/* Desktop Pricing Table */}

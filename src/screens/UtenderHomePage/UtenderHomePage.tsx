@@ -19,9 +19,9 @@ export const UtenderHomePage = (): JSX.Element => {
      <DataTableSection />
     </section>
 
-    {/* Scrolling Tape/Marquee - Centered in Container */}
-    <div className="container">
-     <div className=" px-4 my-8">
+    {/* Scrolling Tape/Marquee - Full Width */}
+    <div className="w-full">
+     <div className="my-8">
       <div className="w-full overflow-hidden">
        <motion.div
         className="flex"
@@ -38,13 +38,21 @@ export const UtenderHomePage = (): JSX.Element => {
         }}
        >
         {/* Duplicate images for seamless loop */}
-        <div className="flex items-center  gap-0 shrink-0">
-         <img className="h-[63px] w-auto" alt="Frame" src="/frame-1618868864.svg" />
-         <img className="h-[63px] w-auto" alt="Frame" src="/frame-1618868864.svg" />
+        <div className="flex items-center gap-12 shrink-0 px-6">
+         <img className="h-[63px] w-auto" alt="Frame" src="/homepage/Automita.svg" />
+         <img className="h-[63px] w-auto" alt="Frame" src="/homepage/Dplus.svg" />
+         <img className="h-[63px] w-auto" alt="Frame" src="/homepage/Exfis.svg" />
+         <img className="h-[63px] w-auto" alt="Frame" src="/homepage/New Moment.svg" />
+         <img className="h-[63px] w-auto" alt="Frame" src="/homepage/OSCE.svg" />
+         <img className="h-[63px] w-auto" alt="Frame" src="/homepage/Pirelations.svg" />
         </div>
-        <div className="flex items-center  gap-0 shrink-0">
-         <img className="h-[63px] w-auto" alt="Frame" src="/frame-1618868864.svg" />
-         <img className="h-[63px] w-auto" alt="Frame" src="/frame-1618868864.svg" />
+        <div className="flex items-center gap-12 shrink-0 px-6">
+         <img className="h-[63px] w-auto" alt="Frame" src="/homepage/Automita.svg" />
+         <img className="h-[63px] w-auto" alt="Frame" src="/homepage/Dplus.svg" />
+         <img className="h-[63px] w-auto" alt="Frame" src="/homepage/Exfis.svg" />
+         <img className="h-[63px] w-auto" alt="Frame" src="/homepage/New Moment.svg" />
+         <img className="h-[63px] w-auto" alt="Frame" src="/homepage/OSCE.svg" />
+         <img className="h-[63px] w-auto" alt="Frame" src="/homepage/Pirelations.svg" />
         </div>
        </motion.div>
       </div>

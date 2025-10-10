@@ -49,10 +49,10 @@ export const FooterSection = (): JSX.Element => {
    href: "https://www.facebook.com/utender.eu",
   },
   {
-   icon: "/ph-instagram-logo-fill.svg",
-   alt: "Ph instagram logo",
+   icon: "/linkedin.png",
+   alt: "LinkedIn logo",
    text: "Utender.eu",
-   href: "https://www.instagram.com/utender.eu",
+   href: "https://www.linkedin.com/company/utender-eu/",
   },
  ];
 
@@ -164,9 +164,7 @@ export const FooterSection = (): JSX.Element => {
         </div>
 
         <address className="w-fit [font-family:'Inter',Helvetica] font-medium text-[#1b2631] text-md tracking-[0] leading-[21.6px] not-italic">
-         Rr. Trinë Smajli Prishtinë
-         <br />
-         Republika e Kosovës
+         Xhevded Doda (Dukagjini Tower), Prishtina
         </address>
        </div>
 
@@ -209,21 +207,9 @@ export const FooterSection = (): JSX.Element => {
        <img className="w-10 h-10" alt="To top" src="/to-top.svg" />
       </Button>
 
-      <div className="inline-flex items-center gap-4 flex-[0_0_auto]">
-       <div className="inline-flex items-center gap-[5px] flex-[0_0_auto]">
-        <div className="w-fit mt-[-1.00px] opacity-60 [font-family:'Inter',Helvetica] font-normal text-[#1b2631] text-[10px] tracking-[0] leading-[13px] whitespace-nowrap">
-         With
-        </div>
-
-        <img className="w-3.5 h-[13px]" alt="Vector" src="/vector-10.svg" />
-
-        <div className="w-fit mt-[-1.00px] opacity-60 [font-family:'Inter',Helvetica] font-normal text-[#1b2631] text-[10px] tracking-[0] leading-[13px] whitespace-nowrap">
-         by BBros
-        </div>
-       </div>
-
-       <div className="w-fit mt-[-1.00px] opacity-60 [font-family:'Inter',Helvetica] font-normal text-[#1b2631] text-[10px] tracking-[0] leading-[13px] whitespace-nowrap">
-        © 2023 — Copyright
+      <div className="inline-flex items-center gap-2 flex-[0_0_auto]">
+       <div className="w-fit mt-[-1.00px] [font-family:'Inter',Helvetica] font-normal text-black text-[10px] tracking-[0] leading-[13px]">
+        A product of BBros built with ❤️ since 2012 - today 🚀
        </div>
       </div>
      </div>
@@ -286,9 +272,7 @@ export const FooterSection = (): JSX.Element => {
        <div className="mb-6">
         <div className="opacity-60 font-medium text-[#1b2631] text-xs tracking-wider mb-2">ADDRESS</div>
         <address className="font-medium text-[#1b2631] text-base not-italic">
-         Rr. Trinë Smajli Prishtinë
-         <br />
-         Republika e Kosovës
+         Xhevded Doda (Dukagjini Tower), Prishtina
         </address>
        </div>
 
@@ -324,12 +308,9 @@ export const FooterSection = (): JSX.Element => {
        </Button>
 
        <div className="flex flex-col items-start sm:items-end gap-2 text-xs">
-        <div className="flex items-center gap-1">
-         <span className="opacity-60 font-normal text-[#1b2631]">With</span>
-         <img className="w-3 h-3" alt="Heart" src="/vector-10.svg" />
-         <span className="opacity-60 font-normal text-[#1b2631]">by BBros</span>
+        <div className="font-normal text-black text-center sm:text-right">
+         A product of BBros built with ❤️ since 2012 - today 🚀
         </div>
-        <div className="opacity-60 font-normal text-[#1b2631]">© 2023 — Copyright</div>
        </div>
       </div>
      </div>

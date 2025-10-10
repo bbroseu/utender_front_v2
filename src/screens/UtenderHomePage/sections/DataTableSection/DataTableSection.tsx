@@ -20,10 +20,6 @@ export const DataTableSection = (): JSX.Element => {
      <span className="text-[#1b2631] tracking-[-0.43px] md:tracking-[-0.86px]">Njoftimet më të shpejta për tenderët në </span>
      <span className="text-[#f0c419] tracking-[-0.43px] md:tracking-[-0.86px]">Kosovë</span>
     </h1>
-
-    <p className="relative max-w-[553px] opacity-70 font-normal text-[#161c2d] text-base md:text-[17px] lg:text-[19px] text-center tracking-[-0.20px] leading-6 md:leading-7 lg:leading-8">
-     Lorem ipsum dolor sit amet consectetur. Nam fames nullam aliquet vivamus integer massa amet vel.
-    </p>
    </motion.header>
 
    {/* Table Image */}
