@@ -127,9 +127,9 @@ export const ContactPage = (): JSX.Element => {
           <div>
            <h3 className="text-xl font-semibold text-[#1b2631] mb-2">Adresa</h3>
            <p className="text-gray-600 text-lg">
-            Rr. Garibaldi, Nr. 15
+            Xhevded Doda (Dukagjini Tower)
             <br />
-            10000 Prishtinë, Kosovë
+            Prishtinë, Kosovë
            </p>
           </div>
          </div>

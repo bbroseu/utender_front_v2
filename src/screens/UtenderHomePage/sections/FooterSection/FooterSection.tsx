@@ -164,7 +164,7 @@ export const FooterSection = (): JSX.Element => {
         </div>
 
         <address className="w-fit [font-family:'Inter',Helvetica] font-medium text-[#1b2631] text-md tracking-[0] leading-[21.6px] not-italic">
-         Xhevded Doda (Dukagjini Tower), Prishtina
+         Xhevded Doda (Dukagjini Tower), Prishtinë, Kosovë 
         </address>
        </div>
 
@@ -272,7 +272,7 @@ export const FooterSection = (): JSX.Element => {
        <div className="mb-6">
         <div className="opacity-60 font-medium text-[#1b2631] text-xs tracking-wider mb-2">ADDRESS</div>
         <address className="font-medium text-[#1b2631] text-base not-italic">
-         Xhevded Doda (Dukagjini Tower), Prishtina
+         Xhevded Doda (Dukagjini Tower), Prishtinë, Kosovë 
         </address>
        </div>
 
