@@ -4,7 +4,7 @@ import { User } from '../slices/authSlice';
 
 // Define the base URL for your backend API
 // Update this to match your actual backend URL
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api.utender.eu';
 
 export interface LoginCredentials {
   email: string;
